@@ -18,12 +18,24 @@ def index(request, _):
     """
     # 检查视频文件是否存在
     from django.conf import settings
-    video_path = os.path.join(settings.BASE_DIR,  'WeChat_20250412143759.mp4')
+    video_path = os.path.join(settings.BASE_DIR, 'static', 'WeChat_20250412143759.mp4')
     video_exists = os.path.exists(video_path)
+    
+    # 添加日志记录
+    logger.info(f"视频文件路径: {video_path}")
+    logger.info(f"视频文件是否存在: {video_exists}")
+    
+    # 列出static目录下的所有文件
+    static_dir = os.path.join(settings.BASE_DIR, 'static')
+    if os.path.exists(static_dir):
+        files = os.listdir(static_dir)
+        logger.info(f"static目录下的文件: {files}")
+    else:
+        logger.info(f"static目录不存在: {static_dir}")
     
     context = {
         'video_exists': video_exists,
-        'video_path': '/WeChat_20250412143759.mp4'
+        'video_path': '/static/WeChat_20250412143759.mp4'
     }
     
     return render(request, 'index.html', context)
