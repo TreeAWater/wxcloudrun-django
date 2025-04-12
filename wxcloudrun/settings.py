@@ -184,6 +184,14 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+# 添加静态文件目录
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# 静态文件根目录
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -15,8 +16,17 @@ def index(request, _):
 
      `` request `` 请求对象
     """
-
-    return render(request, 'index.html')
+    # 检查视频文件是否存在
+    from django.conf import settings
+    video_path = os.path.join(settings.BASE_DIR,  'WeChat_20250412143759.mp4')
+    video_exists = os.path.exists(video_path)
+    
+    context = {
+        'video_exists': video_exists,
+        'video_path': '/WeChat_20250412143759.mp4'
+    }
+    
+    return render(request, 'index.html', context)
 
 
 def counter(request, _):
