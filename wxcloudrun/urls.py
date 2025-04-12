@@ -16,6 +16,8 @@ Including another URLconf
 
 from wxcloudrun import views
 from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = (
     # 计数器接口
@@ -24,3 +26,8 @@ urlpatterns = (
     # 获取主页
     url(r'(/)?$', views.index),
 )
+
+# 在调试模式下启用静态文件服务
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static('/', document_root=settings.BASE_DIR)
