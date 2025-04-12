@@ -18,12 +18,12 @@ def index(request, _):
     """
     # 检查视频文件是否存在
     from django.conf import settings
-    video_path = os.path.join(settings.BASE_DIR,  'WeChat_20250412143759.mp4')
+    video_path = os.path.join(settings.BASE_DIR, 'static', 'WeChat_20250412143759.mp4')
     video_exists = os.path.exists(video_path)
     
     context = {
         'video_exists': video_exists,
-        'video_path': '/WeChat_20250412143759.mp4'
+        'video_path': '/static/WeChat_20250412143759.mp4'
     }
     
     return render(request, 'index.html', context)
