@@ -20,6 +20,9 @@ from django.conf.urls import url
 urlpatterns = (
     # 计数器接口
     url(r'^^api/count(/)?$', views.counter),
+    
+    # 视频服务接口
+    url(r'^serve_video(/)?$', views.serve_video),
 
     # 获取主页
     url(r'(/)?$', views.index),

@@ -1,8 +1,11 @@
 import json
 import logging
 import os
+import re
+import mimetypes
+from wsgiref.util import FileWrapper
 
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse, HttpResponse
 from django.shortcuts import render
 from wxcloudrun.models import Counters
 
@@ -23,10 +26,60 @@ def index(request, _):
     
     context = {
         'video_exists': video_exists,
-        'video_path': '/static/WeChat_20250412143759.mp4'
+        'video_path': '/serve_video/'  # 修改为指向我们的视频服务视图
     }
     
     return render(request, 'index.html', context)
+
+
+def serve_video(request):
+    """
+    提供视频文件，支持范围请求
+    """
+    from django.conf import settings
+    
+    video_path = os.path.join(settings.BASE_DIR, 'static', 'WeChat_20250412143759.mp4')
+    
+    if not os.path.exists(video_path):
+        return HttpResponse("视频文件不存在", status=404)
+    
+    file_size = os.path.getsize(video_path)
+    content_type = 'video/mp4'
+    
+    # 处理范围请求
+    range_header = request.META.get('HTTP_RANGE', '').strip()
+    range_match = re.match(r'bytes=(\d+)-(\d*)', range_header)
+    
+    if range_match:
+        start = int(range_match.group(1))
+        end = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+        
+        if start >= file_size:
+            return HttpResponse(status=416)  # 请求范围不满足
+            
+        # 确保范围有效
+        end = min(end, file_size - 1)
+        length = end - start + 1
+        
+        resp = StreamingHttpResponse(
+            FileWrapper(open(video_path, 'rb'), chunk_size=8192),
+            status=206,
+            content_type=content_type
+        )
+        
+        resp['Content-Length'] = str(length)
+        resp['Content-Range'] = f'bytes {start}-{end}/{file_size}'
+        resp['Accept-Ranges'] = 'bytes'
+    else:
+        # 完整文件请求
+        resp = StreamingHttpResponse(
+            FileWrapper(open(video_path, 'rb'), chunk_size=8192),
+            content_type=content_type
+        )
+        resp['Content-Length'] = str(file_size)
+        resp['Accept-Ranges'] = 'bytes'
+    
+    return resp
 
 
 def counter(request, _):

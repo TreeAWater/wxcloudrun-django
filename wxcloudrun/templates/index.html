@@ -53,7 +53,7 @@
     
     {% if video_exists %}
     <div class="video-container">
-      <video controls autoplay>
+      <video controls preload="metadata" controlsList="nodownload" autoplay>
         <source src="{{ video_path }}" type="video/mp4">
         您的浏览器不支持 HTML5 视频。
       </video>
